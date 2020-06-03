@@ -22,11 +22,11 @@ type MultiHash struct {
 
 func CalculateHashes(r io.Reader) (MultiHash, error) {
 	var (
-		err    error = nil
-		md5          = md5.New()
-		sha1         = sha1.New()
-		sha256       = sha256.New()
-		sha512       = sha512.New()
+		err        error = nil
+		md5hash          = md5.New()
+		sha1hash         = sha1.New()
+		sha256hash       = sha256.New()
+		sha512hash       = sha512.New()
 	)
 
 	pagesize := os.Getpagesize()
@@ -35,15 +35,15 @@ func CalculateHashes(r io.Reader) (MultiHash, error) {
 	reader := bufio.NewReaderSize(r, pagesize)
 
 	// create Writer that copies to all hashes
-	multiWriter := io.MultiWriter(md5, sha1, sha256, sha512)
+	multiWriter := io.MultiWriter(md5hash, sha1hash, sha256hash, sha512hash)
 
 	// copy the input to all hashes
 	_, err = io.Copy(multiWriter, reader)
 
 	return MultiHash{
-		hex.EncodeToString(md5.Sum(nil)),
-		hex.EncodeToString(sha1.Sum(nil)),
-		hex.EncodeToString(sha256.Sum(nil)),
-		hex.EncodeToString(sha512.Sum(nil)),
+		hex.EncodeToString(md5hash.Sum(nil)),
+		hex.EncodeToString(sha1hash.Sum(nil)),
+		hex.EncodeToString(sha256hash.Sum(nil)),
+		hex.EncodeToString(sha512hash.Sum(nil)),
 	}, err
 }
