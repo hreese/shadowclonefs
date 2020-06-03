@@ -1,6 +1,9 @@
 package shadowclonefs
 
-import "golang.org/x/sys/unix"
+import (
+	"github.com/vmihailenco/msgpack"
+	"golang.org/x/sys/unix"
+)
 
 type FSObjectMetadata struct {
 	// Error reading this file
@@ -23,9 +26,19 @@ type FSObjectMetadata struct {
 	Gen     uint32
 }
 
+func (fom *FSObjectMetadata) Serialize() ([]byte, error) {
+	return msgpack.Marshal(fom)
+}
+
+func DeserializeFSObjectMetadata(input []byte) (FSObjectMetadata, error) {
+	var fom FSObjectMetadata
+	err := msgpack.Unmarshal(input, &fom)
+	return fom, err
+}
+
 func FileMetadata(filename string) (FSObjectMetadata, error) {
 	var (
-		metadata FSObjectMetadata = FSObjectMetadata{
+		metadata = FSObjectMetadata{
 			Name: filename,
 		}
 		lstatResult unix.Stat_t
